@@ -1,0 +1,107 @@
+@startuml
+title Interview Management System Architecture
+
+actor Interviewee
+actor Interviewer
+actor Admin
+
+package "Client Layer" {
+  rectangle "Mobile App" as mobile_app
+  rectangle "Website" as website
+  rectangle "Mobile Web" as mobile_web
+}
+
+package "API Gateway & Load Balancer" {
+  rectangle "Load Balancer" as load_balancer
+  rectangle "API Gateway" as api_gateway
+}
+
+package "Application API Layer" {
+  rectangle "User Management API" as user_management
+  rectangle "Interview Management API" as interview_management
+  rectangle "Slot Booking API" as slot_booking
+  rectangle "Interview Listing API" as interview_listing
+  rectangle "Interview Actions API" as interview_actions
+  rectangle "Communication API" as communication
+  rectangle "Payment API (Optional)" as payment_api
+  rectangle "Reporting API" as reporting_api
+}
+
+package "Business Logic/Service Layer" {
+  rectangle "Interview Scheduling Service" as scheduling_service
+  rectangle "User Profile & Role Management Service" as profile_service
+  rectangle "Performance Monitoring Service" as performance_service
+  rectangle "Notification/Reminder Service" as notification_service
+  rectangle "Analytics Service" as analytics_service
+}
+
+package "Database Layer" {
+  rectangle "Relational Database (RDBMS)" as rdbms {
+    rectangle "Users Table" as users_table
+    rectangle "Interview Schedule Table" as interview_table
+    rectangle "Performance Data Table" as performance_table
+    rectangle "Payments Table (Optional)" as payments_table
+  }
+  rectangle "Cache (Redis)" as cache
+}
+
+package "External Integrations" {
+  rectangle "Video Conferencing API (Teams/Zoom)" as video_api
+  rectangle "Calendar API" as calendar_api
+  rectangle "Email/SMS Gateway" as email_gateway
+  rectangle "Payment Gateway (Optional)" as payment_gateway
+}
+
+package "Backoffice System (Admin Portal)" {
+  rectangle "Admin Dashboard" as admin_dashboard
+  rectangle "CRUD Operations for Users" as crud_users
+  rectangle "Monitoring System" as monitoring_system
+}
+
+Interviewee --> mobile_app
+Interviewee --> website
+Interviewee --> mobile_web
+Interviewer --> mobile_app
+Interviewer --> website
+Interviewer --> mobile_web
+Admin --> website
+
+mobile_app --> load_balancer
+website --> load_balancer
+mobile_web --> load_balancer
+
+load_balancer --> api_gateway
+
+api_gateway --> user_management
+api_gateway --> interview_management
+api_gateway --> slot_booking
+api_gateway --> interview_listing
+api_gateway --> interview_actions
+api_gateway --> communication
+api_gateway --> payment_api
+api_gateway --> reporting_api
+
+interview_management --> scheduling_service
+user_management --> profile_service
+scheduling_service --> interview_table
+slot_booking --> interview_table
+interview_listing --> interview_table
+interview_actions --> interview_table
+performance_service --> performance_table
+payment_api --> payments_table
+notification_service --> email_gateway
+
+admin_dashboard --> crud_users
+crud_users --> users_table
+monitoring_system --> performance_service
+
+analytics_service --> reporting_api
+
+interview_management --> calendar_api
+communication --> video_api
+communication --> email_gateway
+payment_api --> payment_gateway
+
+cache --> interview_table
+cache --> users_table
+@enduml
