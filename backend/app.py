@@ -1,47 +1,30 @@
-from flask import Flask, jsonify
-import mysql.connector
-from mysql.connector import Error
-import config
+from flask import Flask
+import os
+import sys
 
 app = Flask(__name__)
 
-@app.route('/interview-slots/available', methods=['GET'])
-def get_data():
-    connection = connect_to_db(config.MYSQL_DB)
-    # print(connection)
-    if connection:
-        cursor = connection.cursor(dictionary=True)
-        try:
-            query = "SELECT * FROM interviewfact where interviewStatus = 'Pending'"
-            cursor.execute(query)
-            data = cursor.fetchall()
+# file1_directory = os.path.abspath(
+#     os.path.join(os.path.dirname(__file__), "Interviewer", "controller")
+# )
+# sys.path.append(file1_directory)
 
-            if data:
-                return jsonify(data)
-            else:
-                return jsonify("Invalid Credentials")
-        except Error as e:
-            return jsonify({'error': str(e)})
-    else:
-        return jsonify({'error':"Connection failed"})
+from Interviewer.Controller.InterviewStatus.Pending import register_pending_routes
+from Interviewer.Controller.InterviewStatus.Accepted import register_accepted_routes
+from Interviewer.Controller.InterviewStatus.Cancelled import register_cancelled_routes
+from Interviewer.Controller.InterviewStatus.Completed import register_completed_routes
+from Interviewer.Controller.InterviewStatus.JoinButton import register_joinbutton_routes
+
+register_pending_routes(app)
+register_accepted_routes(app)
+register_cancelled_routes(app)
+register_completed_routes(app)
+register_joinbutton_routes(app)
 
 
-def connect_to_db(db):
-    try:
-        connection = mysql.connector.connect(
-            host = config.MYSQL_HOST,
-            user = config.MYSQL_USER,
-            password = config.MYSQL_PASSWORD,
-            database = db
-        )
-        if connection:
-            print("Connected to", db, "database")
-            # print(connection)
-            return connection
-            
-    except Error as e:
-        print("Error in connecting to", e )
-        return None
+@app.route("/", methods=["GET"])
+def printHello():
+    return "Version:1.0"
 
-if __name__=="__main__":
+if __name__ == "__main__":
     app.run(debug=True)

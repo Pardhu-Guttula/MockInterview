@@ -1,5 +1,7 @@
 create database mockinterview;
 use mockinterview;
+
+show tables;
 drop database mockinterview;
 -- Fact Tables
 CREATE TABLE InterviewFact (
@@ -45,8 +47,8 @@ CREATE TABLE SlotDim (
     time DATETIME NOT NULL,
     status ENUM('Available', 'Accepted', 'Cancelled') NOT NULL
 );
-
-
+describe slotdim
+select * from slotdim
 CREATE TABLE AdminDim (
     adminID VARCHAR(255) PRIMARY KEY,
     userID VARCHAR(255),
